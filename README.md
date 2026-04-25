@@ -138,12 +138,4 @@ Sono salvati nei GitHub Secrets e non sono visibili nel codice.
 
 ---
 
-## 🚀 Possibili miglioramenti
-
-* Interfaccia web per configurazione
-* Supporto multi-utente
-* App iPhone
-
----
-
 Buon divertimento ✨
