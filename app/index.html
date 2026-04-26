@@ -10,15 +10,18 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
+      background: #fafafa;
     }
 
     #map {
-      height: 65vh;
+      height: 60vh;
       width: 100%;
     }
 
     .panel {
       padding: 15px;
+      max-width: 900px;
+      margin: auto;
     }
 
     button {
@@ -32,6 +35,19 @@
       background: #f3f3f3;
       padding: 12px;
       overflow-x: auto;
+      border-radius: 6px;
+    }
+
+    .box {
+      background: white;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    ol {
+      line-height: 1.6;
     }
   </style>
 </head>
@@ -41,19 +57,51 @@
   <div id="map"></div>
 
   <div class="panel">
+    <h1>ISS Transit Config</h1>
+
+    <p>
+      Scegli la tua posizione cliccando sulla mappa oppure usando il GPS.
+      Poi genera il file <b>config.json</b>.
+    </p>
+
     <p><b>Lat:</b> <span id="lat">-</span></p>
     <p><b>Lon:</b> <span id="lon">-</span></p>
 
     <button onclick="useGps()">📍 Usa posizione attuale</button>
     <button onclick="generateConfig()">Genera config.json</button>
+    <button onclick="copyConfig()">📋 Copia config</button>
     <button onclick="downloadConfig()">Scarica config.json</button>
+    <button onclick="openGitHubConfig()">🔧 Apri config su GitHub</button>
 
     <pre id="output"></pre>
+
+    <div class="box">
+      <h2>Come aggiornare il bot</h2>
+
+      <ol>
+        <li>Clicca sulla mappa oppure usa il pulsante <b>Usa posizione attuale</b>.</li>
+        <li>Premi <b>Genera config.json</b>.</li>
+        <li>Premi <b>Copia config</b>.</li>
+        <li>Premi <b>Apri config su GitHub</b>.</li>
+        <li>Su GitHub apri il file <b>config.json</b> in modifica.</li>
+        <li>Cancella il contenuto vecchio.</li>
+        <li>Incolla il nuovo contenuto copiato.</li>
+        <li>Premi <b>Commit changes</b>.</li>
+      </ol>
+
+      <p>
+        Dopo il commit, il bot userà automaticamente la nuova posizione
+        al prossimo controllo giornaliero.
+      </p>
+    </div>
   </div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
   <script>
+    // Cambia questo link con il tuo vero repository
+    const GITHUB_CONFIG_URL = "https://github.com/TUO-USERNAME/iss-transit-platform/blob/main/config.json";
+
     const map = L.map('map').setView([46.8, 8.3], 7);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -133,6 +181,26 @@
         JSON.stringify(currentConfig, null, 2);
     }
 
+    function copyConfig() {
+      if (currentConfig === null) {
+        generateConfig();
+      }
+
+      if (currentConfig === null) {
+        return;
+      }
+
+      const json = JSON.stringify(currentConfig, null, 2);
+
+      navigator.clipboard.writeText(json)
+        .then(() => {
+          alert("Config copiato negli appunti.");
+        })
+        .catch(() => {
+          alert("Copia automatica non riuscita. Copia manualmente il testo.");
+        });
+    }
+
     function downloadConfig() {
       if (currentConfig === null) {
         generateConfig();
@@ -152,6 +220,10 @@
       a.click();
 
       URL.revokeObjectURL(url);
+    }
+
+    function openGitHubConfig() {
+      window.open(GITHUB_CONFIG_URL, "https://github.com/ericcatta/iss-transit-platform/blob/main/config.json");
     }
   </script>
 
