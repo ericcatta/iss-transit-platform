@@ -237,15 +237,6 @@ def refine_candidate(
         "path_description": path_description,
     }
 
-
-# Se parte in automatico, invia solo alle 7 italiane.
-# Se lo lanci manualmente, funziona sempre.
-event_name = os.environ.get("GITHUB_EVENT_NAME", "")
-local_now = datetime.now(LOCAL_TZ)
-
-if event_name == "schedule" and local_now.hour != 7:
-    raise SystemExit("Non sono le 7 in Italia, esco senza inviare.")
-
 ts = load.timescale()
 eph = load("de421.bsp")
 
