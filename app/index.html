@@ -1,52 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ISS Config App</title>
+  <meta charset="UTF-8">
+  <title>ISS Transit Config</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    input { width: 100%; margin: 5px 0; }
-    textarea { width: 100%; height: 150px; }
-    button { padding: 10px; margin-top: 10px; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    #map {
+      height: 70vh;
+      width: 100%;
+    }
+
+    .panel {
+      padding: 15px;
+    }
+
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
   </style>
 </head>
+
 <body>
 
-<h2>📍 Config ISS Bot</h2>
+  <div id="map"></div>
 
-<label>Latitudine</label>
-<input id="lat" type="number" step="0.0001">
+  <div class="panel">
+    <p><b>Lat:</b> <span id="lat">-</span></p>
+    <p><b>Lon:</b> <span id="lon">-</span></p>
 
-<label>Longitudine</label>
-<input id="lon" type="number" step="0.0001">
+    <button onclick="generateConfig()">Genera config.json</button>
 
-<label>Raggio (km)</label>
-<input id="radius" type="number" value="40">
+    <pre id="output"></pre>
+  </div>
 
-<label>Ore da analizzare</label>
-<input id="hours" type="number" value="72">
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-<button onclick="generate()">Genera config.json</button>
+  <script>
+    // Inizializza mappa (centrata su Europa)
+    const map = L.map('map').setView([46.8, 8.3], 7);
 
-<h3>📄 Copia questo:</h3>
-<textarea id="output"></textarea>
+    // Tile OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
 
-<script>
-function generate() {
-  const config = {
-    users: [{
-      name: "Utente",
-      lat: parseFloat(document.getElementById("lat").value),
-      lon: parseFloat(document.getElementById("lon").value),
-      radius_km: parseInt(document.getElementById("radius").value),
-      grid_step_km: 5,
-      search_hours: parseInt(document.getElementById("hours").value)
-    }]
-  };
+    let marker = null;
+    let selectedLat = null;
+    let selectedLon = null;
 
-  document.getElementById("output").value = JSON.stringify(config, null, 2);
-}
-</script>
+    // Click sulla mappa
+    map.on('click', function(e) {
+      selectedLat = e.latlng.lat;
+      selectedLon = e.latlng.lng;
+
+      // Aggiorna UI
+      document.getElementById("lat").innerText = selectedLat.toFixed(6);
+      document.getElementById("lon").innerText = selectedLon.toFixed(6);
+
+      // Marker
+      if (marker) {
+        map.removeLayer(marker);
+      }
+
+      marker = L.marker([selectedLat, selectedLon]).addTo(map);
+    });
+
+    function generateConfig() {
+      if (selectedLat === null) {
+        alert("Clicca sulla mappa prima!");
+        return;
+      }
+
+      const config = {
+        users: [
+          {
+            lat: selectedLat,
+            lon: selectedLon,
+            radius_km: 40,
+            grid_step_km: 5,
+            search_hours: 24
+          }
+        ]
+      };
+
+      document.getElementById("output").innerText =
+        JSON.stringify(config, null, 2);
+    }
+  </script>
 
 </body>
 </html>
