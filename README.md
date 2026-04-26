@@ -1,141 +1,186 @@
-# 🚀 ISS Transit Bot
+# 🚀 ISS Transit Platform
 
-Questo progetto invia ogni giorno su Telegram un report con i possibili transiti della Stazione Spaziale Internazionale (ISS) davanti al Sole o alla Luna vicino alla tua posizione.
-
-## 📱 Cosa fa
-
-* Controlla ogni giorno automaticamente
-* Analizza i prossimi giorni (configurabile)
-* Cerca transiti entro un raggio in km
-* Ti invia un messaggio Telegram
-* Mostra:
-
-  * data e ora
-  * durata del transito
-  * tipo (centrale, interno, bordo)
-  * distanza dalla tua posizione
-  * punto su mappa
+Trova automaticamente i transiti della Stazione Spaziale Internazionale (ISS) davanti al Sole ☀️ o alla Luna 🌙 vicino alla tua posizione e ricevi tutto direttamente su Telegram.
 
 ---
 
-## ⚙️ Requisiti
+## 🧠 Cos'è
 
-* Account GitHub
-* Account Telegram
+ISS Transit Platform è un sistema automatico che:
 
----
-
-## 🔧 Setup (5 minuti)
-
-### 1. Copia il progetto
-
-Premi **Fork** in alto a destra oppure copia il repository.
+GitHub Actions → Python (calcoli astronomici avanzati) → ISS + Sole + Luna → analisi su area (fino a 40 km) → rilevamento transiti reali → notifica su Telegram
 
 ---
 
-### 2. Crea il bot Telegram
+## ✨ Funzionalità
+
+- 📡 Calcolo posizione ISS, Sole e Luna (Skyfield)
+- 🎯 Ricerca transiti reali (non solo passaggi)
+- 🌍 Analisi su area (non solo punto singolo)
+- ⏱ Precisione fino al secondo
+- 📏 Durata del transito
+- 🧭 Traiettoria sul disco (centro / interno / bordo)
+- 📬 Notifica automatica ogni giorno su Telegram
+- 📱 Web app con mappa e GPS per configurazione
+
+---
+
+## 📁 Struttura
+
+iss-transit-platform ├─ send_telegram.py        ← motore principale ├─ config.json             ← configurazione utente ├─ app/ │  └─ index.html           ← web app (mappa + GPS) └─ .github/workflows/    └─ daily.yml            ← automazione giornaliera
+
+---
+
+## ⚙️ Setup (5 minuti)
+
+### 1. 🤖 Crea bot Telegram
 
 Apri Telegram e cerca:
 
 @BotFather
 
-Scrivi:
+Poi:
 
 /newbot
 
-Segui le istruzioni e salva il **token**.
+Salva il token → sarà TELEGRAM_BOT_TOKEN
 
 ---
 
-### 3. Trova il tuo chat ID
+### 2. 🆔 Ottieni chat ID
 
-Apri il bot e premi **Start**.
-
-Poi apri questo link nel browser:
+Apri nel browser:
 
 https://api.telegram.org/botTUO_TOKEN/getUpdates
 
-Cerca:
+Trova:
 
-"chat":{"id":123456789
+json "chat": {   "id": 123456789 } 
 
-Quel numero è il tuo **CHAT_ID**.
-
----
-
-### 4. Aggiungi i secrets su GitHub
-
-Vai nel repo:
-
-Settings → Secrets and variables → Actions → New repository secret
-
-Aggiungi:
-
-TELEGRAM_BOT_TOKEN → il token del bot
-TELEGRAM_CHAT_ID → il tuo chat id
+👉 quello è il tuo TELEGRAM_CHAT_ID
 
 ---
 
-### 5. Configura la tua posizione
-
-Apri il file:
-
-config.json
-
-E modifica:
-
-```json
-{
-  "users": [
-    {
-      "name": "Il tuo nome",
-      "lat": 45.4642,
-      "lon": 9.1900,
-      "radius_km": 40,
-      "grid_step_km": 5,
-      "search_hours": 72
-    }
-  ]
-}
-```
-
-Puoi trovare lat/lon da Google Maps.
-
----
-
-### 6. Avvia il bot
+### 3. 🔐 GitHub Secrets
 
 Vai su:
 
-Actions → Daily ISS Transit Platform → Run workflow
+Settings → Secrets → Actions
 
-Se tutto funziona riceverai un messaggio Telegram.
+Aggiungi:
+
+TELEGRAM_BOT_TOKEN TELEGRAM_CHAT_ID
 
 ---
 
-## ⏰ Automazione
+### 4. 📍 Configura posizione (facile)
 
-Il bot gira automaticamente ogni giorno alle 07:00 (ora italiana).
+Apri la web app:
+
+app/index.html
+
+Oppure via GitHub Pages.
+
+Poi:
+
+1. clicca sulla mappa oppure usa GPS
+2. premi Genera config
+3. premi Copia
+4. apri config.json su GitHub
+5. incolla
+6. commit
+
+---
+
+## 🔧 config.json
+
+Esempio:
+
+json {   "users": [     {       "lat": 46.2465,       "lon": 9.0245,       "radius_km": 40,       "grid_step_km": 5,       "search_hours": 24     }   ] } 
+
+---
+
+## ▶️ Avvio
+
+### Manuale
+
+Actions → Run workflow
+
+---
+
+### Automatico
+
+Ogni giorno:
+
+cron: "0 5 * * *"
+
+👉 circa:
+- 07:00 estate
+- 06:00 inverno
+
+⚠️ GitHub può ritardare di qualche minuto (normale)
+
+---
+
+## 📬 Output Telegram
+
+Riceverai:
+
+- ✔ messaggio ogni giorno
+- ✔ anche se non ci sono eventi
+- ✔ dettagli completi se ci sono transiti:
+
+🔹 Evento Oggetto: Sole Tipo: centrale Durata: 0.8 s Distanza: 12 km Mappa: link
+
+---
+
+## 🧭 Web App
+
+Funzionalità:
+
+- 🗺️ mappa interattiva
+- 📍 GPS automatico
+- 📋 copia config
+- 📥 download config.json
+- 🔗 link diretto a GitHub
 
 ---
 
 ## 🔐 Sicurezza
 
-⚠️ Non condividere mai:
-
-* TELEGRAM_BOT_TOKEN
-* TELEGRAM_CHAT_ID
-
-Sono salvati nei GitHub Secrets e non sono visibili nel codice.
+✔ nessun token nel codice  
+✔ uso GitHub Secrets  
+✔ nessun server  
+✔ tutto gira su GitHub  
 
 ---
 
 ## 🧠 Note
 
-* I transiti sono rari: è normale non ricevere eventi per giorni
-* Il sistema analizza anche zone entro un raggio configurabile
-* La precisione è circa al secondo
+- I transiti ISS sono rari
+- È normale ricevere molti “nessun evento”
+- Il sistema analizza una zona, non un punto
+- Precisione dipende da TLE e step temporali
 
 ---
 
-Buon divertimento ✨
+## 🚀 Roadmap
+
+- [ ] miglioramento UI web app
+- [ ] mappa con area visuale
+- [ ] supporto multi-utente
+- [ ] app Mac standalone
+
+---
+
+## 🧾 In breve
+
+> Un sistema automatico che trova transiti ISS reali  
+> e li trasforma in notifiche Telegram utilizzabili da chiunque  
+> senza server e senza costi.
+
+---
+
+## 📜 Licenza
+
+Progetto personale / astronomia amatori
