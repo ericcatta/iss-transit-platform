@@ -3,7 +3,7 @@ name: Daily ISS Transit Platform
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 5,6 * * *"
+    - cron: "0 5 * * *"
 
 jobs:
   send-message:
